@@ -1,23 +1,24 @@
+# render.yaml
+
 services:
-  - type: worker
-    name: attendance-bot
+  - type: web
+    name: attendance-bot           # имя сервиса на Render, можно изменить
     env: python
     plan: free
     buildCommand: "pip install -r requirements.txt"
     startCommand: "python bot.py"
     envVars:
-      - key: BOT_TOKEN
+      - key: BOT_TOKEN             # сюда Render попросит твой Telegram токен
         sync: false
-      - key: DATABASE_URL
+      - key: ADMIN_IDS             # Telegram ID админа(ов)
+        sync: false
+      - key: DATABASE_URL          # ссылка на базу, Render подставит автоматически
         fromDatabase:
           name: attendance-db
           property: connectionString
-      - key: ADMIN_IDS
-        sync: false
 
 databases:
-  - name: attendance-db
-    plan: free
-    databaseName: attendance
-    user: attendance_user
-    postgresVersion: 17
+  - name: attendance-db            # имя базы данных на Render
+    plan: free                     # бесплатный тариф
+    databaseName: attendance       # имя самой базы
+    user: attendance_user          # имя пользователя
