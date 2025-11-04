@@ -1,5 +1,5 @@
 import os
-from sqlalchemy import create_engine, Column, Integer, String, Date, ForeignKey, func
+from sqlalchemy import create_engine, Column, Integer, String, Date, ForeignKey
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 from datetime import date
 
@@ -24,7 +24,7 @@ class Attendance(Base):
 
 Base.metadata.create_all(engine)
 
-# Функции
+# Функции для работы с БД
 def add_employee(name, position=None):
     session = Session()
     emp = Employee(name=name, position=position)
