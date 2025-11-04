@@ -2,18 +2,27 @@ import os
 import logging
 from datetime import datetime
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes, ConversationHandler
+from telegram.ext import (
+    ApplicationBuilder,
+    CommandHandler,
+    CallbackQueryHandler,
+    ContextTypes,
+    ConversationHandler,
+    MessageHandler,
+    filters
+)
 from db import add_employee, list_employees, mark_attendance, get_attendance_report
 
 # Логи
 logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level=logging.INFO
 )
 
 ADMIN_IDS = list(map(int, os.getenv("ADMIN_IDS", "").split(",")))
 
-# Состояния для ConversationHandler
-MENU, ADD_EMPLOYEE, MARK_ATTENDANCE, REPORT = range(4)
+# Состояния ConversationHandler
+MENU, ADD_EMPLOYEE, MARK_ATTENDANCE = range(3)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
@@ -82,7 +91,7 @@ def main():
         entry_points=[CommandHandler("start", start)],
         states={
             MENU: [CallbackQueryHandler(menu_handler)],
-            ADD_EMPLOYEE: [MessageHandler(filters=None, callback=add_employee_handler)],
+            ADD_EMPLOYEE: [MessageHandler(filters.TEXT & ~filters.COMMAND, add_employee_handler)],
             MARK_ATTENDANCE: [CallbackQueryHandler(mark_attendance_handler, pattern=r"mark_\d+")],
         },
         fallbacks=[CommandHandler("start", start)],
